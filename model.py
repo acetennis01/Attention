@@ -17,7 +17,6 @@ class InputEmbeddings(nn.Module):
     def forward(self, x):
         return self.embedding(x) * math.sqrt(self.d_model)
 
-
 class PositionalEncodings(nn.Module):
 
     def __init__(self, d_model: int, seq_length: int, dropout: float):
@@ -50,7 +49,6 @@ class PositionalEncodings(nn.Module):
 
 # Add&Norm
 
-
 class LayerNorm(nn.Module):
 
     def __init__(self, epsilon: float = 10**-6):
@@ -69,7 +67,6 @@ class LayerNorm(nn.Module):
 
 # FFN(x) = max(0, xW1 + b1)W2 + b2
 
-
 class FeedForward(nn.Module):
 
     def __init__(self, d_model: int, d_ff: int, dropout: float) -> None:
@@ -87,7 +84,6 @@ class FeedForward(nn.Module):
 # MultiHead(Q, K, V ) = Concat(head1, ..., headh)W_O
 #                       where head_i = Attention(QxW_Q_i , KxW_K_i , VxW_V_i )
 # Attention(Q, K, V ) = softmax(QK_T/sqrt(d_k))V
-
 
 class MultiHead(nn.Module):
 
@@ -159,7 +155,6 @@ class MultiHead(nn.Module):
         # MultiHead(Q, K, V) = Concat(head_i, .., head_h) x W_o
         return self.w_o(x)
 
-
 class ResidualConnection(nn.Module):
 
     def __init__(self, droupout: float) -> None:
@@ -169,7 +164,6 @@ class ResidualConnection(nn.Module):
 
     def forward(self, x, sublayer):
         return x + self.dropout(sublayer(self.norm(x)))
-
 
 class EncoderBlock(nn.Module):
 
@@ -188,7 +182,6 @@ class EncoderBlock(nn.Module):
 
 # run the EncoderBlock N times
 
-
 class Encoder(nn.Module):
 
     def __init__(self, layers: nn.ModuleList) -> None:
@@ -202,7 +195,6 @@ class Encoder(nn.Module):
 
         # Take the Layer Normalization of x
         return self.norm(x)
-
 
 class DecoderBlock(nn.Module):
 
@@ -224,7 +216,6 @@ class DecoderBlock(nn.Module):
 
 # runs the decoder block n times
 
-
 class Decoder(nn.Module):
 
     def __init__(self, layers: nn.ModuleList) -> None:
@@ -241,7 +232,6 @@ class Decoder(nn.Module):
 
 # Linear + Softmax
 
-
 class ProjectionLayer(nn.Module):
 
     def __init__(self, d_model: int, vocab_size: int) -> None:
@@ -251,7 +241,6 @@ class ProjectionLayer(nn.Module):
     def forward(self, x):
         # (batch, seq_length, d_model) --> (bath, seq_length, vocab_size)
         return torch.softmax(self.proj(x), dim=-1)
-
 
 class Transformer(nn.Module):
     def __init__(self, encoder: Encoder, decoder: Decoder, src_embed: InputEmbeddings, tgt_embed: InputEmbeddings, src_pos: PositionalEncodings, tgt_pose: PositionalEncodings, projection_layer: ProjectionLayer):
@@ -276,7 +265,6 @@ class Transformer(nn.Module):
 
     def project(self, x):
         return self.projection_layer(x)
-
 
 def transformer(src_vocab_size: int, tgt_vocab_size: int, src_seq_len: int, tgt_seq_len: int, d_model: int = 512, N: int = 6, h: int = 8, dropout: float = 0.1, d_ff: int = 2048) -> Transformer:
     # Embedding layers
